@@ -12,8 +12,14 @@ namespace FWF.KeyExchange.Bootstrap
             builder.RegisterType<DefaultLogFactory>().AsSelf().As<ILogFactory>().SingleInstance();
             builder.RegisterType<ConsoleOutLogWriter>().AsSelf().As<ILogWriter>().SingleInstance();
 
-            //
+            // Register a crypto random implementation
             builder.RegisterType<RngRandom>().AsSelf().As<IRandom>().SingleInstance();
+
+            // Register a basic symmetric encryption implementation
+            builder.RegisterType<SymmetricEncryptionProvider>()
+                .AsSelf()
+                .As<ISymmetricEncryptionProvider>()
+                .SingleInstance();
 
             //builder.RegisterType<KeyExchangeProvider>()
             //    .AsSelf()

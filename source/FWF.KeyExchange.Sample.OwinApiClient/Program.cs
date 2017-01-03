@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using Autofac;
@@ -22,6 +20,7 @@ namespace FWF.KeyExchange.Sample.OwinApiClient
             var container = containerBuilder.Build();
 
             var keyExchangeProvider = container.Resolve<IKeyExchangeProvider>();
+            var symmetricEncryptionProvider = container.Resolve<ISymmetricEncryptionProvider>();
             var random = container.Resolve<IRandom>();
 
             keyExchangeProvider.Start();
@@ -48,24 +47,16 @@ namespace FWF.KeyExchange.Sample.OwinApiClient
 
                 // Create a message
                 var plainTextMessage = random.AnyString(1024);
+                byte[] plainTextData = Encoding.UTF8.GetBytes(plainTextMessage);
+
                 byte[] iv;
-                byte[] encryptedMessage;
 
                 // Encrypt the message with the shared key and a new IV
-                using (Aes aes = new AesCryptoServiceProvider())
-                {
-                    aes.Key = keyExchangeProvider.SharedKey;
-                    iv = aes.IV;
-
-                    using (var stream = new MemoryStream())
-                    using (var cs = new CryptoStream(stream, aes.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        byte[] plainTextData = Encoding.UTF8.GetBytes(plainTextMessage);
-                        cs.Write(plainTextData, 0, plainTextData.Length);
-                        cs.Close();
-                        encryptedMessage = stream.ToArray();
-                    }
-                }
+                var encryptedMessage = symmetricEncryptionProvider.Encrypt(
+                    keyExchangeProvider.SharedKey,
+                    plainTextData,
+                    out iv
+                    );
 
                 var ivString = Convert.ToBase64String(iv);
                 var encodedIv = HttpUtility.UrlEncode(ivString);

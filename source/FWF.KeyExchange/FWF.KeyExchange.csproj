@@ -63,6 +63,7 @@
     <Compile Include="IKeyExchangeProvider.cs" />
     <Compile Include="IRandom.cs" />
     <Compile Include="IRunnable.cs" />
+    <Compile Include="ISymmetricEncryptionProvider.cs" />
     <Compile Include="KeyExchangeProvider.cs" />
     <Compile Include="Logging\BaseLogWriter.cs" />
     <Compile Include="Logging\ConsoleOutLogWriter.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RngRandom.cs" />
     <Compile Include="Startable.cs" />
+    <Compile Include="SymmetricEncryptionProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
