@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>FWF.KeyExchange.Owin</id>
+    <version>0.0.0</version>
+    <authors>FWF</authors>
+    <owners>FWF</owners>
+    <licenseUrl>http://tempuri.org/licenseUrl</licenseUrl>
+    <projectUrl>http://tempuri.org/Galileo</projectUrl>
+    <iconUrl>http://tempuri.org/iconUrl</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2017</copyright>
+
+    <description>
+      OWIN middleware to support a Diffie-Hellman key exchange.
+    </description>
+
+    <releaseNotes></releaseNotes>
+    <tags></tags>
+
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Numerics" targetFramework="net462" />
+    </frameworkAssemblies>
+
+    <references>
+      <group targetFramework="net462">
+        <reference file="FWF.KeyExchange.dll" />
+        <reference file="FWF.KeyExchange.Owin.dll" />
+      </group>
+    </references>
+  
+    <dependencies>
+      <group>
+        <dependency id="Autofac" version="4.2.1" />
+        <dependency id="Microsoft.Owin" version="3.0.1" />
+        <dependency id="Owin" version="1.0" />
+      </group>
+    </dependencies>
+  
+  </metadata> 
+</package>
