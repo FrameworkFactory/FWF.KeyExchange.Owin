@@ -1,19 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
+using FWF.KeyExchange.Logging;
 
 namespace FWF.KeyExchange
 {
-    internal class KeyExchangeProvider : Startable, IKeyExchangeProvider, IDisposable
+    internal class KeyExchangeProvider : IKeyExchangeProvider, IDisposable
     {
 
-        private byte[] _publicKey;
-        private byte[] _sharedKey;
-
         private readonly ECDiffieHellmanCng _cng;
+        private readonly IDictionary<string, byte[]> _endpoints = new Dictionary<string, byte[]>(); 
 
-        public KeyExchangeProvider()
+        private readonly ICache _cache;
+        private readonly ILog _log;
+
+        public KeyExchangeProvider(
+            ICache cache,
+            ILogFactory logFactory
+            )
         {
-            _cng = new ECDiffieHellmanCng
+            _cache = cache;
+
+            _log = logFactory.CreateForType(this);
+
+            var keyName = "ECDH";
+
+            CngKey cngKey;
+
+            if (CngKey.Exists(keyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.Silent))
+            {
+                cngKey = CngKey.Open(keyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.Silent);
+            }
+            else
+            {
+                cngKey = CngKey.Create(
+                    CngAlgorithm.ECDiffieHellmanP256,
+                    keyName,
+                    new CngKeyCreationParameters
+                    {
+                        ExportPolicy = CngExportPolicies.AllowPlaintextExport,
+                        KeyCreationOptions = CngKeyCreationOptions.None,
+                        KeyUsage = CngKeyUsages.AllUsages,
+                        Provider = CngProvider.MicrosoftSoftwareKeyStorageProvider,
+                        UIPolicy = new CngUIPolicy(CngUIProtectionLevels.None),
+                    }
+                    );
+            }
+
+            _cng = new ECDiffieHellmanCng(cngKey)
             {
                 KeyDerivationFunction = ECDiffieHellmanKeyDerivationFunction.Hash,
                 HashAlgorithm = CngAlgorithm.Sha256,
@@ -30,21 +64,11 @@ namespace FWF.KeyExchange
         {
             if (disposing)
             {
+                _endpoints.Clear();
                 _cng.Dispose();
             }
         }
-
-        protected override void OnStart()
-        {
-            _publicKey = _cng.PublicKey.ToByteArray();
-        }
-
-        protected override void OnStop()
-        {
-            _publicKey = null;
-            _sharedKey = null;
-        }
-
+        
         public KeyExchangeBitLength BitLength
         {
             get
@@ -79,28 +103,52 @@ namespace FWF.KeyExchange
         {
             get
             {
-                return _publicKey;
+                return _cng.PublicKey.ToByteArray();
             }
         }
 
         public void ConfigureEndpointExchange(string endpointId, byte[] remotePublicKey)
         {
+            if (endpointId.IsMissing())
+            {
+                throw new ArgumentNullException("endpointId");
+            }
+            if (ReferenceEquals(remotePublicKey, null) || remotePublicKey.Length == 0)
+            {
+                throw new ArgumentNullException("remotePublicKey");
+            }
+
+            // Generate a shared key from the remote public key
             var remoteKey = CngKey.Import(remotePublicKey, CngKeyBlobFormat.EccPublicBlob);
-            _sharedKey = _cng.DeriveKeyMaterial(remoteKey);
+            var sharedKey = _cng.DeriveKeyMaterial(remoteKey);
+            
+            // Save the shared key
+            _endpoints[endpointId] = sharedKey;
+
+            // 
+            _cache.Push(endpointId, sharedKey);
         }
 
         public bool IsEndpointConfigured(string endpointId)
         {
-            return false;
+            return _endpoints.ContainsKey(endpointId);
         }
 
-
-        public byte[] SharedKey
+        public byte[] GetEndpointSharedKey(string endpointId)
         {
-            get
+            if (_endpoints.ContainsKey(endpointId))
             {
-                return _sharedKey;
+                return _endpoints[endpointId];
             }
+
+            var sharedKey = _cache.Fetch(endpointId);
+
+            if (!ReferenceEquals(sharedKey, null))
+            {
+                _endpoints[endpointId] = sharedKey;
+            }
+
+            return sharedKey;
         }
         
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using FWF.KeyExchange.Logging;
 using NUnit.Framework;
 
 namespace FWF.KeyExchange.Test
@@ -17,9 +18,12 @@ namespace FWF.KeyExchange.Test
         {
             var container = TestApplicationState.Container;
 
+            var cache = container.Resolve<ICache>();
+            var logFactory = container.Resolve<ILogFactory>();
+
             // Get two instances to exchange keys between them
-            _localKeyExchangeProvider = container.Resolve<IKeyExchangeProvider>();
-            _remoteKeyExchangeProvider = container.Resolve<IKeyExchangeProvider>();
+            _localKeyExchangeProvider = new KeyExchangeProvider(cache, logFactory);
+            _remoteKeyExchangeProvider = new KeyExchangeProvider(cache, logFactory);
         }
 
         [TearDown]
@@ -31,9 +35,6 @@ namespace FWF.KeyExchange.Test
         [Test]
         public void Connect()
         {
-            _localKeyExchangeProvider.Start();
-            _remoteKeyExchangeProvider.Start();
-
             Assert.IsNotNull(_localKeyExchangeProvider.PublicKey);
             Assert.IsNotNull(_remoteKeyExchangeProvider.PublicKey);
 
@@ -50,11 +51,14 @@ namespace FWF.KeyExchange.Test
             Assert.IsNotNull(_remoteKeyExchangeProvider.IsEndpointConfigured(localEndpointId));
 
             // 
-            Assert.IsNotNull(_localKeyExchangeProvider.SharedKey);
-            Assert.IsNotNull(_remoteKeyExchangeProvider.SharedKey);
+            var localSharedKey = _localKeyExchangeProvider.GetEndpointSharedKey(remoteEndpointId);
+            var remoteSharedKey = _remoteKeyExchangeProvider.GetEndpointSharedKey(localEndpointId);
+
+            Assert.IsNotNull(localSharedKey);
+            Assert.IsNotNull(remoteSharedKey);
 
             //
-            Assert.IsTrue(_localKeyExchangeProvider.SharedKey.IsEqualByte(_remoteKeyExchangeProvider.SharedKey));
+            Assert.IsTrue(localSharedKey.IsEqualByte(remoteSharedKey));
 
         }
 

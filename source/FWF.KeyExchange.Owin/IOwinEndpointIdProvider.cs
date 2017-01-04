@@ -3,7 +3,7 @@ using Microsoft.Owin;
 
 namespace FWF.KeyExchange.Owin
 {
-    public interface IOwinEndpointIdProvider : IEndpointIdProvider
+    public interface IOwinEndpointIdProvider
     {
         string DetermineEndpointId(IOwinContext owinContext);
     }

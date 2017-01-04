@@ -2,7 +2,7 @@
 
 namespace FWF.KeyExchange
 {
-    public interface IKeyExchangeProvider : IRunnable 
+    public interface IKeyExchangeProvider 
     {
 
         KeyExchangeBitLength BitLength
@@ -19,10 +19,7 @@ namespace FWF.KeyExchange
 
         bool IsEndpointConfigured(string endpointId);
 
-        byte[] SharedKey
-        {
-            get;
-        }
+        byte[] GetEndpointSharedKey(string endpointId);
         
     }
 }

@@ -21,11 +21,10 @@ namespace FWF.KeyExchange.Bootstrap
                 .As<ISymmetricEncryptionProvider>()
                 .SingleInstance();
 
-            //builder.RegisterType<KeyExchangeProvider>()
-            //    .AsSelf()
-            //    .As<IKeyExchangeProvider>()
-            //    .InstancePerDependency();
-
+            // Register a no-op cache implementation
+            builder.RegisterType<NoOpCache>().AsSelf().As<ICache>().SingleInstance();
+            
+            // 
             builder.RegisterType<KeyExchangeProvider>()
                 .AsSelf()
                 .As<IKeyExchangeProvider>()
