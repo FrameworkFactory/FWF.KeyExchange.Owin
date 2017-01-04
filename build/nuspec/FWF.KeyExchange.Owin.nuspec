@@ -3,11 +3,9 @@
   <metadata>
     <id>FWF.KeyExchange.Owin</id>
     <version>0.0.0</version>
-    <authors>FWF</authors>
+    <authors>Jon Banta</authors>
     <owners>FWF</owners>
-    <licenseUrl>http://tempuri.org/licenseUrl</licenseUrl>
-    <projectUrl>http://tempuri.org/Galileo</projectUrl>
-    <iconUrl>http://tempuri.org/iconUrl</iconUrl>
+    <projectUrl>http://www.frameworkfactory.com/owin-middleware-for-the-diffie-hellman-key-exchange/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright 2017</copyright>
 
