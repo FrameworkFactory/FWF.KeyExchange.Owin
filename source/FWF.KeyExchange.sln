@@ -7,9 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange", "FWF.KeyE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Test", "FWF.KeyExchange.Test\FWF.KeyExchange.Test.csproj", "{9E771B4F-9D9A-4A6B-A23B-CAD56CCA0388}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Sample.OwinApi", "FWF.KeyExchange.Sample.OwinApi\FWF.KeyExchange.Sample.OwinApi.csproj", "{F475B85D-8B68-4C20-8E33-82B400127B90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Sample.OwinApi", "Samples\FWF.KeyExchange.Sample.OwinApi\FWF.KeyExchange.Sample.OwinApi.csproj", "{F475B85D-8B68-4C20-8E33-82B400127B90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Sample.OwinApiClient", "FWF.KeyExchange.Sample.OwinApiClient\FWF.KeyExchange.Sample.OwinApiClient.csproj", "{F98AEDAD-A760-4B6F-B7FA-4CB88D50F9C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Sample.OwinApiClient", "Samples\FWF.KeyExchange.Sample.OwinApiClient\FWF.KeyExchange.Sample.OwinApiClient.csproj", "{F98AEDAD-A760-4B6F-B7FA-4CB88D50F9C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{565573A6-5681-4A5B-B53A-535E85D405DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Owin", "FWF.KeyExchange.OWIN\FWF.KeyExchange.Owin.csproj", "{5D286BD8-D055-4384-BF06-48EF7F276DB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Owin.Test", "FWF.KeyExchange.OWIN.Test\FWF.KeyExchange.Owin.Test.csproj", "{98968B3C-C64C-42D3-92B7-01D6E0D6AE38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +39,20 @@ Global
 		{F98AEDAD-A760-4B6F-B7FA-4CB88D50F9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F98AEDAD-A760-4B6F-B7FA-4CB88D50F9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F98AEDAD-A760-4B6F-B7FA-4CB88D50F9C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98968B3C-C64C-42D3-92B7-01D6E0D6AE38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98968B3C-C64C-42D3-92B7-01D6E0D6AE38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98968B3C-C64C-42D3-92B7-01D6E0D6AE38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98968B3C-C64C-42D3-92B7-01D6E0D6AE38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F475B85D-8B68-4C20-8E33-82B400127B90} = {565573A6-5681-4A5B-B53A-535E85D405DD}
+		{F98AEDAD-A760-4B6F-B7FA-4CB88D50F9C4} = {565573A6-5681-4A5B-B53A-535E85D405DD}
 	EndGlobalSection
 EndGlobal

@@ -33,7 +33,7 @@ namespace FWF.KeyExchange.Sample.OwinApiClient
                 }
 
                 // Give the public key to exchange the key with the remote api
-                var exchangeUrl = rootUrl + "exchange";
+                var exchangeUrl = rootUrl + "keyexchange";
                 var postData = new StringContent(Convert.ToBase64String(keyExchangeProvider.PublicKey));
 
                 using (var httpResponse = http.PostAsync(exchangeUrl, postData).Result)

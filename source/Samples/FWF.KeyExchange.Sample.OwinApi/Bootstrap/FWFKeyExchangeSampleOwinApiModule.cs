@@ -12,7 +12,7 @@ namespace FWF.KeyExchange.Sample.OwinApi.Bootstrap
                 .AsSelf()
                 .SingleInstance();
 
-            builder.RegisterType<KeyExchangeHandler>().AsSelf().SingleInstance();
+            builder.RegisterType<RootHandler>().AsSelf().SingleInstance();
             builder.RegisterType<MessageSendHandler>().AsSelf().SingleInstance();
         }
     }

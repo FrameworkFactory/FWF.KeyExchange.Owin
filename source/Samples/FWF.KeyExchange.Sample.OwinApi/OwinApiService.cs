@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using FWF.KeyExchange.Logging;
+using FWF.KeyExchange.Owin;
 using FWF.KeyExchange.Sample.OwinApi.Handlers;
 using Microsoft.Owin;
 using Microsoft.Owin.Host.HttpListener;
@@ -16,8 +17,7 @@ namespace FWF.KeyExchange.Sample.OwinApi
     {
 
         private readonly IKeyExchangeProvider _keyExchangeProvider;
-
-        private readonly KeyExchangeHandler _keyExchangeHandler;
+        private readonly RootHandler _rootHandler;
         private readonly MessageSendHandler _messageSendHandler;
 
         private IDisposable _webHost;
@@ -28,13 +28,13 @@ namespace FWF.KeyExchange.Sample.OwinApi
 
         public OwinApiService(
             IKeyExchangeProvider keyExchangeProvider,
-            KeyExchangeHandler keyExchangeHandler,
+            RootHandler rootHandler,
             MessageSendHandler messageSendHandler,
             ILogFactory logFactory
             )
         {
             _keyExchangeProvider = keyExchangeProvider;
-            _keyExchangeHandler = keyExchangeHandler;
+            _rootHandler = rootHandler;
             _messageSendHandler = messageSendHandler;
 
             _log = logFactory.CreateForType(this);
@@ -93,36 +93,19 @@ namespace FWF.KeyExchange.Sample.OwinApi
 
             appBuilder.SetLoggerFactory(_owinLogFactory);
 
-            appBuilder.Use(HandleRoot);
-            appBuilder.Use(_keyExchangeHandler.Handle);
-            appBuilder.Use(_messageSendHandler.Handle);
-        }
-
-        private Task HandleRoot(IOwinContext context, Func<Task> next)
-        {
-            var requestPath = context.Request.Path.Value.ToLowerInvariant();
-            var requestMethod = context.Request.Method;
-
-            var isRootRequest = (
-                requestPath == "/"
-                || requestPath == "/index.htm"
-                || requestPath == "/index.html"
-                || requestPath == "/default.htm"
-                || requestPath == "/default.html"
-                );
-
-            //
-            if (isRootRequest && requestMethod == "GET")
+            // Use KeyExchange middleware to handle the key exchange
+            var options = new OwinKeyExchangeOptions
             {
-                context.Response.StatusCode = (int)HttpStatusCode.OK;
-                context.Response.Headers.Set("Content-Type", "application/json");
-                context.Response.ContentType = "application/json";
-                context.Response.Write("{}");
+                KeyExchangeProvider = _keyExchangeProvider
+            };
+            appBuilder.UseKeyExchange(options);
 
-                return Task.CompletedTask;
-            }
 
-            return next();
+            // Handle any request to the root path
+            appBuilder.Use(_rootHandler.Handle);
+
+            // DEMO: Handle any incoming message that has been encrypted with the shared key
+            appBuilder.Use(_messageSendHandler.Handle);
         }
         
 
