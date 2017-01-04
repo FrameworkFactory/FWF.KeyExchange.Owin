@@ -37,9 +37,17 @@ namespace FWF.KeyExchange.Test
             Assert.IsNotNull(_localKeyExchangeProvider.PublicKey);
             Assert.IsNotNull(_remoteKeyExchangeProvider.PublicKey);
 
+            // 
+            var localEndpointId = "ABC";
+            var remoteEndpointId = "DEF";
+
             // NOTE: Give each other the public key
-            _localKeyExchangeProvider.Exchange(_remoteKeyExchangeProvider.PublicKey);
-            _remoteKeyExchangeProvider.Exchange(_localKeyExchangeProvider.PublicKey);
+            _localKeyExchangeProvider.ConfigureEndpointExchange(remoteEndpointId, _remoteKeyExchangeProvider.PublicKey);
+            _remoteKeyExchangeProvider.ConfigureEndpointExchange(localEndpointId, _localKeyExchangeProvider.PublicKey);
+
+            // 
+            Assert.IsNotNull(_localKeyExchangeProvider.IsEndpointConfigured(remoteEndpointId));
+            Assert.IsNotNull(_remoteKeyExchangeProvider.IsEndpointConfigured(localEndpointId));
 
             // 
             Assert.IsNotNull(_localKeyExchangeProvider.SharedKey);

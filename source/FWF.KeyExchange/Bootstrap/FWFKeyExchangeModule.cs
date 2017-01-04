@@ -26,7 +26,7 @@ namespace FWF.KeyExchange.Bootstrap
             //    .As<IKeyExchangeProvider>()
             //    .InstancePerDependency();
 
-            builder.RegisterType<DiffieHellmanFromFramework>()
+            builder.RegisterType<KeyExchangeProvider>()
                 .AsSelf()
                 .As<IKeyExchangeProvider>()
                 .SingleInstance();

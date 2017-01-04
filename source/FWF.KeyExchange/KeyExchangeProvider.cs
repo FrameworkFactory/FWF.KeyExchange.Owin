@@ -1,33 +1,42 @@
 ﻿using System;
-using System.IO;
-using FWF.KeyExchange.Logging;
+using System.Security.Cryptography;
 
 namespace FWF.KeyExchange
 {
-    internal class KeyExchangeProvider : Startable, IKeyExchangeProvider
+    internal class KeyExchangeProvider : Startable, IKeyExchangeProvider, IDisposable
     {
 
         private byte[] _publicKey;
         private byte[] _sharedKey;
 
-        private readonly int PublicKeyByteLength = 256;
+        private readonly ECDiffieHellmanCng _cng;
 
-        private readonly IRandom _random;
-        private readonly ILog _log;
-
-        public KeyExchangeProvider(
-            IRandom random,
-            ILogFactory logFactory
-            )
+        public KeyExchangeProvider()
         {
-            _random = random;
+            _cng = new ECDiffieHellmanCng
+            {
+                KeyDerivationFunction = ECDiffieHellmanKeyDerivationFunction.Hash,
+                HashAlgorithm = CngAlgorithm.Sha256,
+            };
+        }
 
-            _log = logFactory.CreateForType(this);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cng.Dispose();
+            }
         }
 
         protected override void OnStart()
         {
-            _publicKey = _random.AnyBytes(PublicKeyByteLength);
+            _publicKey = _cng.PublicKey.ToByteArray();
         }
 
         protected override void OnStop()
@@ -36,6 +45,35 @@ namespace FWF.KeyExchange
             _sharedKey = null;
         }
 
+        public KeyExchangeBitLength BitLength
+        {
+            get
+            {
+                if (_cng.HashAlgorithm == CngAlgorithm.Sha256)
+                {
+                    return KeyExchangeBitLength.Hash256;
+                }
+                if (_cng.HashAlgorithm == CngAlgorithm.Sha512)
+                {
+                    return KeyExchangeBitLength.Hash512;
+                }
+
+                throw new InvalidOperationException("Unable to determine bit length");
+            }
+            set
+            {
+                if (value == KeyExchangeBitLength.Hash256)
+                {
+                    _cng.HashAlgorithm = CngAlgorithm.Sha256;
+                }
+                if (value == KeyExchangeBitLength.Hash512)
+                {
+                    _cng.HashAlgorithm = CngAlgorithm.Sha512;
+                }
+
+                throw new InvalidOperationException("Unable to set bit length");
+            }
+        }
 
         public byte[] PublicKey
         {
@@ -45,6 +83,18 @@ namespace FWF.KeyExchange
             }
         }
 
+        public void ConfigureEndpointExchange(string endpointId, byte[] remotePublicKey)
+        {
+            var remoteKey = CngKey.Import(remotePublicKey, CngKeyBlobFormat.EccPublicBlob);
+            _sharedKey = _cng.DeriveKeyMaterial(remoteKey);
+        }
+
+        public bool IsEndpointConfigured(string endpointId)
+        {
+            return false;
+        }
+
+
         public byte[] SharedKey
         {
             get
@@ -52,13 +102,6 @@ namespace FWF.KeyExchange
                 return _sharedKey;
             }
         }
-
-        public void Exchange(byte[] remotePublicKey)
-        {
-            //BigInteger.ModPow();
-
-
-        }
-
+        
     }
 }
