@@ -33,17 +33,16 @@ Task Publish.NuGet -description "Create NuGet packages" {
 
 Task Push.NuGet -description "Push NuGet packages to NuGet server" {
 
-    $nugetDestinations = @( 'http://localhost/nuget/' )
-    $nugetApiKeys = @( 'DEBUG' )
+    #$nugetDestinations = @( 'http://localhost/nuget/' )
+    $nugetDestinations = @( 'https://www.nuget.org/api/v2/package' )
     
     for($i = 0; $i -le $nugetDestinations.Length - 1; $i++) {
     
         $destination = $nugetDestinations[$i]
-        $apiKey = $nugetApiKeys[$i]
         
         Get-ChildItem "$publish_directory\nuget\*.nupkg" | % {
             exec {
-                & "$scripts_directory\tools\nuget.exe" push $_.FullName -NonInteractive -Source $destination -ApiKey $apiKey 
+                & "$scripts_directory\tools\nuget.exe" push $_.FullName -Source $destination 
             }
         }
     }
