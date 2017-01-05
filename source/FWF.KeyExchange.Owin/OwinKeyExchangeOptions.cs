@@ -8,8 +8,6 @@ namespace FWF.KeyExchange.Owin
     public class OwinKeyExchangeOptions
     {
 
-        private IContainer _container;
-
         public OwinKeyExchangeOptions()
         {
             this.BitLength = KeyExchangeBitLength.Hash256;
@@ -23,21 +21,13 @@ namespace FWF.KeyExchange.Owin
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule<FWFKeyExchangeModule>();
             containerBuilder.RegisterModule<FWFKeyExchangeOwinModule>();
-            _container = containerBuilder.Build();
+            var container = containerBuilder.Build();
             
-            this.KeyExchangeProvider = _container.Resolve<IKeyExchangeProvider>();
-            this.EndpointIdProvider = _container.Resolve<IOwinEndpointIdProvider>();
-            this.SymmetricEncryptionProvider = _container.Resolve<ISymmetricEncryptionProvider>();
+            this.KeyExchangeProvider = container.Resolve<IKeyExchangeProvider>();
+            this.EndpointIdProvider = container.Resolve<IOwinEndpointIdProvider>();
+            this.SymmetricEncryptionProvider = container.Resolve<ISymmetricEncryptionProvider>();
         }
-
-        public IContainer Container
-        {
-            get
-            {
-                return _container;
-            }
-        }
-
+        
         public IKeyExchangeProvider KeyExchangeProvider
         {
             get;
