@@ -17,12 +17,12 @@
     <tags></tags>
 
     <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Web" targetFramework="net462" />
       <frameworkAssembly assemblyName="System.Numerics" targetFramework="net462" />
     </frameworkAssemblies>
 
     <references>
       <group targetFramework="net462">
-        <reference file="FWF.KeyExchange.dll" />
         <reference file="FWF.KeyExchange.Owin.dll" />
       </group>
     </references>

@@ -8,27 +8,42 @@ namespace FWF.KeyExchange.Owin
     public class OwinKeyExchangeMiddleware : OwinMiddleware
     {
 
-        public OwinKeyExchangeOptions Options { get; set; }
+        private FWFKeyExchangeBootstrapper _boostrapper;
 
         public OwinKeyExchangeMiddleware(
             OwinMiddleware next,
             IAppBuilder appBuilder,
-            OwinKeyExchangeOptions options
-            ): base(next)
+            FWFKeyExchangeBootstrapper boostrapper
+            ) : base(next)
         {
-            if (ReferenceEquals(options, null))
+            if (ReferenceEquals(boostrapper, null))
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException("boostrapper");
             }
 
-            this.Options = options;
+            _boostrapper = boostrapper;
+
+            var options = _boostrapper.Resolve<KeyExchangeOptions>();
+            
+            if (ReferenceEquals(options.KeyExchangeProvider, null))
+            {
+                options.KeyExchangeProvider = _boostrapper.Resolve<IKeyExchangeProvider>();
+            }
+            if (ReferenceEquals(options.EndpointIdProvider, null))
+            {
+                options.EndpointIdProvider = _boostrapper.Resolve<IEndpointIdProvider>();
+            }
+            if (ReferenceEquals(options.SymmetricEncryptionProvider, null))
+            {
+                options.SymmetricEncryptionProvider = _boostrapper.Resolve<ISymmetricEncryptionProvider>();
+            }
         }
 
         public override async Task Invoke(IOwinContext context)
         {
             var handler = new OwinKeyExchangeHandler();
 
-            handler.Initialize(this.Options, context);
+            handler.Initialize(_boostrapper, context);
 
             if (!await handler.InvokeAsync())
                 await this.Next.Invoke(context);

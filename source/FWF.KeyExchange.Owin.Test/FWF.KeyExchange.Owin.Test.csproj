@@ -54,10 +54,19 @@
     <Compile Include="..\VersionAssemblyInfo.cs">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Bootstrap\FWFKeyExchangeTestModule.cs" />
+    <Compile Include="KeyExchangeProviderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestApplication.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FWF.KeyExchange.OWIN\FWF.KeyExchange.Owin.csproj">
+      <Project>{5d286bd8-d055-4384-bf06-48ef7f276db9}</Project>
+      <Name>FWF.KeyExchange.Owin</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

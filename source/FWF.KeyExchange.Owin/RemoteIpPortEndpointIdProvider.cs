@@ -3,8 +3,15 @@ using Microsoft.Owin;
 
 namespace FWF.KeyExchange.Owin
 {
-    internal class RemoteIpPortEndpointIdProvider : IOwinEndpointIdProvider
+    internal class RemoteIpPortEndpointIdProvider : IEndpointIdProvider
     {
+
+        public string DetermineEndpointId(Uri remoteHost)
+        {
+            var endpointId = string.Concat(remoteHost.Host, remoteHost.Port);
+
+            return endpointId;
+        }
 
         public string DetermineEndpointId(IOwinContext owinContext)
         {

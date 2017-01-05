@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange", "FWF.KeyExchange\FWF.KeyExchange.csproj", "{C2BCEF23-2CAD-47BB-9906-959895F5B105}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Test", "FWF.KeyExchange.Test\FWF.KeyExchange.Test.csproj", "{9E771B4F-9D9A-4A6B-A23B-CAD56CCA0388}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Owin", "FWF.KeyExchange.OWIN\FWF.KeyExchange.Owin.csproj", "{5D286BD8-D055-4384-BF06-48EF7F276DB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FWF.KeyExchange.Owin.Test", "FWF.KeyExchange.OWIN.Test\FWF.KeyExchange.Owin.Test.csproj", "{98968B3C-C64C-42D3-92B7-01D6E0D6AE38}"
@@ -17,14 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C2BCEF23-2CAD-47BB-9906-959895F5B105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C2BCEF23-2CAD-47BB-9906-959895F5B105}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C2BCEF23-2CAD-47BB-9906-959895F5B105}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2BCEF23-2CAD-47BB-9906-959895F5B105}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E771B4F-9D9A-4A6B-A23B-CAD56CCA0388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E771B4F-9D9A-4A6B-A23B-CAD56CCA0388}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E771B4F-9D9A-4A6B-A23B-CAD56CCA0388}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E771B4F-9D9A-4A6B-A23B-CAD56CCA0388}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D286BD8-D055-4384-BF06-48EF7F276DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -12,23 +12,22 @@ namespace FWF.KeyExchange.Owin
         
         private IOwinContext _owinContext;
         private bool _haveInit;
-
-        private IKeyExchangeProvider _keyExchangeProvider;
-        private IOwinEndpointIdProvider _owinEndpointIdProvider;
-        private string _keyExchangePath;
-
+        
         private readonly Encoding _defaultEncoding = Encoding.UTF8;
 
-        public void Initialize(OwinKeyExchangeOptions options, IOwinContext context)
+        public void Initialize(FWFKeyExchangeBootstrapper bootstrapper, IOwinContext context)
         {
-            if (ReferenceEquals(options, null))
+            if (ReferenceEquals(bootstrapper, null))
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException("bootstrapper");
             }
             if (ReferenceEquals(context, null))
             {
                 throw new ArgumentNullException("context");
             }
+
+            var options = bootstrapper.Resolve<KeyExchangeOptions>();
+
             if (ReferenceEquals(options.KeyExchangeProvider, null))
             {
                 throw new ArgumentException("Must supply a KeyExchangeProvider");
@@ -46,16 +45,9 @@ namespace FWF.KeyExchange.Owin
 
             _owinContext = context;
 
-            //
-            _keyExchangePath = options.KeyExchangePath.ToLowerInvariant();
-            _keyExchangeProvider = options.KeyExchangeProvider;
-            _owinEndpointIdProvider = options.EndpointIdProvider;
-
-            // NOTE: Save the AutoFac IoC container to the OWIN context to allow
-            // child components to retrieve implementations from the container
-            _owinContext.Environment[OwinKeyExchangeEnvironment.KeyExchangeProvider] = options.KeyExchangeProvider;
-            _owinContext.Environment[OwinKeyExchangeEnvironment.EndpointIdProvider] = options.EndpointIdProvider;
-            _owinContext.Environment[OwinKeyExchangeEnvironment.SymmetricEncryptionProvider] = options.SymmetricEncryptionProvider;
+            // NOTE: Save the options to the OWIN context to allow child components to 
+            // retrieve settings and implementation logic
+            _owinContext.Environment[OwinKeyExchangeKeyNames.Bootstrapper] = bootstrapper;
         }
 
         public virtual Task<bool> InvokeAsync()
@@ -65,13 +57,22 @@ namespace FWF.KeyExchange.Owin
                 throw new InvalidOperationException("Must Initialize component before invoking");
             }
 
+            // Retrieve KeyExchange from the IOwinContext
+            var bootstrapper = _owinContext.Environment[OwinKeyExchangeKeyNames.Bootstrapper] as FWFKeyExchangeBootstrapper;
+
+            var options = bootstrapper.Resolve<KeyExchangeOptions>();
+
+            var keyExchangePath = options.KeyExchangePath.ToLowerInvariant();
+            var keyExchangeProvider = options.KeyExchangeProvider;
+            var owinEndpointIdProvider = options.EndpointIdProvider;
+
             var requestPath = _owinContext.Request.Path.Value.ToLowerInvariant();
             var requestMethod = _owinContext.Request.Method;
 
-            if (requestMethod == "POST" && requestPath == _keyExchangePath)
+            if (requestMethod == "POST" && requestPath == keyExchangePath)
             {
                 // Determine an id for the remote endpoint
-                var endpointId = _owinEndpointIdProvider.DetermineEndpointId(_owinContext);
+                var endpointId = owinEndpointIdProvider.DetermineEndpointId(_owinContext);
 
                 // Get key from POST data
                 string keyString;
@@ -82,10 +83,10 @@ namespace FWF.KeyExchange.Owin
                 var keyData = Convert.FromBase64String(keyString);
 
                 // Give the exchange key to the key exchange provider
-                _keyExchangeProvider.ConfigureEndpointExchange(endpointId, keyData);
+                keyExchangeProvider.ConfigureEndpointExchange(endpointId, keyData);
 
                 // Write the local public key back in the response
-                var publicKeyString = Convert.ToBase64String(_keyExchangeProvider.PublicKey);
+                var publicKeyString = Convert.ToBase64String(keyExchangeProvider.PublicKey);
 
                 _owinContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 _owinContext.Response.Headers.Set("Content-Type", "text/plain");

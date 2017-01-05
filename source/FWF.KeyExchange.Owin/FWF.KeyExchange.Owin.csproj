@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -59,23 +60,44 @@
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AppBuilderExtensions.cs" />
+    <Compile Include="FWFKeyExchangeBootstrapper.cs" />
     <Compile Include="Bootstrap\FWFKeyExchangeOwinModule.cs" />
-    <Compile Include="IOwinEndpointIdProvider.cs" />
-    <Compile Include="OwinKeyExchangeEnvironment.cs" />
+    <Compile Include="Extensions\ByteExtensions.cs" />
+    <Compile Include="Extensions\ComponentContextExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtension.cs" />
+    <Compile Include="Extensions\LogExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="ICache.cs" />
+    <Compile Include="IKeyExchangeProvider.cs" />
+    <Compile Include="IEndpointIdProvider.cs" />
+    <Compile Include="IRandom.cs" />
+    <Compile Include="ISymmetricEncryptionProvider.cs" />
+    <Compile Include="KeyExchangeBitLength.cs" />
+    <Compile Include="KeyExchangeHttpClient.cs" />
+    <Compile Include="KeyExchangeOptions.cs" />
+    <Compile Include="KeyExchangeProvider.cs" />
+    <Compile Include="Logging\ConsoleLogWriter.cs" />
+    <Compile Include="Logging\DefaultLog.cs" />
+    <Compile Include="Logging\DefaultLogFactory.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\ILogFactory.cs" />
+    <Compile Include="Logging\ILogPayload.cs" />
+    <Compile Include="Logging\ILogWriter.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\LogPayload.cs" />
+    <Compile Include="NoOpCache.cs" />
+    <Compile Include="OwinKeyExchangeKeyNames.cs" />
     <Compile Include="OwinKeyExchangeHandler.cs" />
+    <Compile Include="OwinKeyExchangeMessageHandler.cs" />
+    <Compile Include="OwinKeyExchangeMessageMiddleware.cs" />
     <Compile Include="OwinKeyExchangeMiddleware.cs" />
-    <Compile Include="OwinKeyExchangeOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteIpPortEndpointIdProvider.cs" />
+    <Compile Include="RngRandom.cs" />
+    <Compile Include="SymmetricEncryptionProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FWF.KeyExchange\FWF.KeyExchange.csproj">
-      <Project>{c2bcef23-2cad-47bb-9906-959895f5b105}</Project>
-      <Name>FWF.KeyExchange</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
