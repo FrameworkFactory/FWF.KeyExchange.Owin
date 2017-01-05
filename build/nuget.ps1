@@ -30,20 +30,22 @@ Task Publish.NuGet -description "Create NuGet packages" {
 
 }
 
+Task Push.NuGet.Local -description "Push NuGet packages to local NuGet server" {
+
+    Get-ChildItem "$publish_directory\nuget\*.nupkg" | % {
+        exec {
+            & "$scripts_directory\tools\nuget.exe" push $_.FullName -Source 'http://localhost/nuget/' 
+        }
+    }
+
+}
+
 
 Task Push.NuGet -description "Push NuGet packages to NuGet server" {
 
-    #$nugetDestinations = @( 'http://localhost/nuget/' )
-    $nugetDestinations = @( 'https://www.nuget.org/api/v2/package' )
-    
-    for($i = 0; $i -le $nugetDestinations.Length - 1; $i++) {
-    
-        $destination = $nugetDestinations[$i]
-        
-        Get-ChildItem "$publish_directory\nuget\*.nupkg" | % {
-            exec {
-                & "$scripts_directory\tools\nuget.exe" push $_.FullName -Source $destination 
-            }
+    Get-ChildItem "$publish_directory\nuget\*.nupkg" | % {
+        exec {
+            & "$scripts_directory\tools\nuget.exe" push $_.FullName -Source 'https://www.nuget.org/api/v2/package' 
         }
     }
 

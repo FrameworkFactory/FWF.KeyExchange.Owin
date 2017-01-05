@@ -59,7 +59,9 @@
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AppBuilderExtensions.cs" />
+    <Compile Include="Bootstrap\FWFKeyExchangeOwinModule.cs" />
     <Compile Include="IOwinEndpointIdProvider.cs" />
+    <Compile Include="OwinKeyExchangeEnvironment.cs" />
     <Compile Include="OwinKeyExchangeHandler.cs" />
     <Compile Include="OwinKeyExchangeMiddleware.cs" />
     <Compile Include="OwinKeyExchangeOptions.cs" />

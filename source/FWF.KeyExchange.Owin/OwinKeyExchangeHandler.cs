@@ -10,12 +10,13 @@ namespace FWF.KeyExchange.Owin
     internal class OwinKeyExchangeHandler
     {
         
-        private IKeyExchangeProvider _keyExchangeProvider;
-        private IOwinEndpointIdProvider _endpointIdProvider;
         private IOwinContext _owinContext;
         private bool _haveInit;
 
+        private IKeyExchangeProvider _keyExchangeProvider;
+        private IOwinEndpointIdProvider _owinEndpointIdProvider;
         private string _keyExchangePath;
+
         private readonly Encoding _defaultEncoding = Encoding.UTF8;
 
         public void Initialize(OwinKeyExchangeOptions options, IOwinContext context)
@@ -46,13 +47,15 @@ namespace FWF.KeyExchange.Owin
             _owinContext = context;
 
             //
-            _keyExchangeProvider = options.KeyExchangeProvider;
-
-            //
-            _endpointIdProvider = options.EndpointIdProvider;
-
-            //
             _keyExchangePath = options.KeyExchangePath.ToLowerInvariant();
+            _keyExchangeProvider = options.KeyExchangeProvider;
+            _owinEndpointIdProvider = options.EndpointIdProvider;
+
+            // NOTE: Save the AutoFac IoC container to the OWIN context to allow
+            // child components to retrieve implementations from the container
+            _owinContext.Environment[OwinKeyExchangeEnvironment.KeyExchangeProvider] = options.KeyExchangeProvider;
+            _owinContext.Environment[OwinKeyExchangeEnvironment.EndpointIdProvider] = options.EndpointIdProvider;
+            _owinContext.Environment[OwinKeyExchangeEnvironment.SymmetricEncryptionProvider] = options.SymmetricEncryptionProvider;
         }
 
         public virtual Task<bool> InvokeAsync()
@@ -68,7 +71,7 @@ namespace FWF.KeyExchange.Owin
             if (requestMethod == "POST" && requestPath == _keyExchangePath)
             {
                 // Determine an id for the remote endpoint
-                var endpointId = _endpointIdProvider.DetermineEndpointId(_owinContext);
+                var endpointId = _owinEndpointIdProvider.DetermineEndpointId(_owinContext);
 
                 // Get key from POST data
                 string keyString;
