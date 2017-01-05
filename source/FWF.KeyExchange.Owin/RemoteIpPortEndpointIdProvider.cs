@@ -15,10 +15,7 @@ namespace FWF.KeyExchange.Owin
 
         public string DetermineEndpointId(IOwinContext owinContext)
         {
-            var ipAddress = owinContext.Request.RemoteIpAddress;
-            var port = owinContext.Request.RemotePort.GetValueOrDefault(0);
-
-            return string.Concat(ipAddress, "-", port);
+            return owinContext.Request.RemoteIpAddress;
         }
 
     }
