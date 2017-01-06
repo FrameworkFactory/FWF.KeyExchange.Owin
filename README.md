@@ -25,11 +25,19 @@ of communication without configuration overhead or manual key sharing.
 
 ```cs
 // Use KeyExchange middleware to handle the key exchange
-var options = new OwinKeyExchangeOptions
+var bootstrapper = new FWFKeyExchangeBootstrapper();
+appBuilder.UseKeyExchange(bootstrapper);
+```
+
+3.  Use the KeyExchangeHttpClient component to make HTTP(s) calls using the shared encryption key 
+
+```cs
+// Send the message to remote endpoint once the key exchange
+// has taken place and the message is encrypted over the wire
+using (var http = new KeyExchangeHttpClient(bootstrapper))
 {
-    KeyExchangeProvider = _keyExchangeProvider
-};
-appBuilder.UseKeyExchange(options);
+    http.SendPayload(rootUrl, plainTextMessage);
+}
 ```
 
 
